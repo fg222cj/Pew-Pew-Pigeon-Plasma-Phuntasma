@@ -4,7 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class Boundary
 {
-	public float xMin, xMax, zMin, zMax;
+	public float xMin, xMax, yMin, yMax;
 
 }
 
@@ -13,8 +13,10 @@ public class PlayerController : MonoBehaviour
 	public float speed;
 	public Boundary boundary;
 
-	public GameObject laser;
-	public Transform laserSpawn;
+	public GameObject laserLeft;
+	public GameObject laserRight;
+	public Transform laserSpawnLeft;
+	public Transform laserSpawnRight;
 	public float fireRate;
 
 	private float nextFire = 0.0f;
@@ -24,7 +26,8 @@ public class PlayerController : MonoBehaviour
 		if (Input.GetButton ("Fire1") && Time.time > nextFire) 
 		{
 			nextFire = Time.time + fireRate;
-			Instantiate (laser, laserSpawn.position, laserSpawn.rotation);
+			Instantiate (laserLeft, laserSpawnLeft.position, laserSpawnLeft.rotation);
+			Instantiate (laserRight, laserSpawnRight.position, laserSpawnRight.rotation);
 		}
 	}
 
@@ -35,14 +38,13 @@ public class PlayerController : MonoBehaviour
 		float moveVertical = Input.GetAxis("Vertical");
 
 
-		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
+		Vector3 movement = new Vector2 (moveHorizontal, moveVertical);
 		rigidbody.velocity = movement * speed;
 
-		rigidbody.position = new Vector3 
+		rigidbody.position = new Vector2 
 		(
 			Mathf.Clamp (rigidbody.position.x, boundary.xMin, boundary.xMax),
-			0.0f,
-			Mathf.Clamp (rigidbody.position.z, boundary.zMin, boundary.zMax)
+			Mathf.Clamp (rigidbody.position.y, boundary.yMin, boundary.yMax)
 		);
 	}
 }

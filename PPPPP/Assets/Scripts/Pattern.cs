@@ -2,15 +2,15 @@
 using System.Collections;
 
 public class Pattern : MonoBehaviour {
-	protected float VerticalSpeed 
+	public float VerticalSpeed
 	{ 
 		get { return gameObject.rigidbody.velocity.y; }
-		set { rigidbody.velocity.y = value; }
+		set { gameObject.rigidbody.velocity = new Vector3(HorizontalSpeed, value, 0.0f); }
 	}
-	protected float HorizontalSpeed 
+	public float HorizontalSpeed
 	{
 		get { return gameObject.rigidbody.velocity.x; }
-		set { rigidbody.velocity.x = value; }
+		set { gameObject.rigidbody.velocity = new Vector3(value, VerticalSpeed, 0.0f); }
 	}
 
 	protected float PositionX

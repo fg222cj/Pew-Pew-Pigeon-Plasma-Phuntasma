@@ -10,9 +10,9 @@ public class PatternZ : Pattern {
 			VerticalSpeed = 0;
 			HorizontalSpeed = -5;
 		}
-		else if (PositionY <= 3 && PositionX < 1)
+		else if (PositionY <= 3 && PositionX < -1)
 		{
-			VerticalSpeed = 5;
+			VerticalSpeed = -5;
 			HorizontalSpeed = 0;
 		}
 	}

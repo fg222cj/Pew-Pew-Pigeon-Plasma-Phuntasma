@@ -9,10 +9,12 @@ public class DestroyByContact : MonoBehaviour
 		{
 			return;
 		}
+
 		if (other.tag != "Player") 
 		{
 			Destroy (other.gameObject);
 		}
+
 		Destroy (gameObject);
 	}
 }

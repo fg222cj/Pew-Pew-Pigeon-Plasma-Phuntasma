@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
-	public GameObject hazard;
-	public Vector2 spawnValues;
-	public int hazardCount;
-	public float spawnWait;
+	public List<WaveController> waves;
+
 	public float startWait;
 	public float waveWait;
+
+	public float restartWait; // Antal sekunder tills allt börjar om. Ta bort den här när nivåer har implementerats.
 
 	void Start()
 	{
@@ -19,14 +20,16 @@ public class GameController : MonoBehaviour
 		yield return new WaitForSeconds(startWait);
 		while(true)
 		{
-			for (int i = 0; i < hazardCount; i++) 
+			foreach(WaveController wave in waves) 
 			{
-				Vector2 spawnPosition = new Vector2 (spawnValues.x, spawnValues.y);
-				Quaternion spawnRotation = Quaternion.identity;
-				Instantiate (hazard, spawnPosition, spawnRotation);
-				yield return new WaitForSeconds(spawnWait);
+				for(int i = 0; i < wave.enemyCount; i++)
+				{
+					Instantiate (wave.enemy, wave.spawnValues, Quaternion.identity);
+					yield return new WaitForSeconds(wave.spawnWait);
+				}
+				yield return new WaitForSeconds(waveWait);
 			}
-			yield return new WaitForSeconds(waveWait);
+			yield return new WaitForSeconds(restartWait);
 		}
 	}
 }

@@ -7,6 +7,4 @@ public class WaveController : MonoBehaviour
 	public int enemyCount;
 	public Vector2 spawnValues;
 	public float spawnWait;
-	public Pattern movementPattern;
-
 }

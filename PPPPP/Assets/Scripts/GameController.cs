@@ -11,6 +11,9 @@ public class GameController : MonoBehaviour
 
 	public float restartWait; // Antal sekunder tills allt börjar om. Ta bort den här när nivåer har implementerats.
 
+	public GUIText scoreText;
+	public int score;
+
 	void Start()
 	{
 		StartCoroutine (SpawnWaves ());
@@ -18,18 +21,22 @@ public class GameController : MonoBehaviour
 	IEnumerator SpawnWaves ()
 	{
 		yield return new WaitForSeconds(startWait);
-		while(true)
+
+		foreach(WaveController wave in waves) 
 		{
-			foreach(WaveController wave in waves) 
+			for(int i = 0; i < wave.enemyCount; i++)
 			{
-				for(int i = 0; i < wave.enemyCount; i++)
-				{
-					Instantiate (wave.enemy, wave.spawnValues, Quaternion.identity);
-					yield return new WaitForSeconds(wave.spawnWait);
-				}
-				yield return new WaitForSeconds(waveWait);
+				Instantiate (wave.enemy, wave.spawnValues, Quaternion.identity);
+				yield return new WaitForSeconds(wave.spawnWait);
 			}
-			yield return new WaitForSeconds(restartWait);
+			yield return new WaitForSeconds(waveWait);
 		}
+		yield return new WaitForSeconds(restartWait);
+	}
+
+	public void UpdateScore(int scoreValue)
+	{
+		score += scoreValue;
+		scoreText.text = score.ToString();
 	}
 }

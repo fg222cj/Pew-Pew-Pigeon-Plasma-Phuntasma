@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 {
 	public float speed;
 	public Boundary boundary;
+	public float tilt;
 
 	public GameObject laserLeft;
 	public GameObject laserRight;
@@ -19,7 +20,18 @@ public class PlayerController : MonoBehaviour
 	public Transform laserSpawnRight;
 	public float fireRate;
 
+	public int healthPoints;
+	public float invulnerableTime;
+	private float invulnerableExpire = 0.0f;
+
 	private float nextFire = 0.0f;
+
+	private Animator anim;
+
+	void Start()
+	{
+		anim = GetComponent<Animator> ();
+	}
 
 	void Update()
 	{
@@ -46,5 +58,32 @@ public class PlayerController : MonoBehaviour
 			Mathf.Clamp (rigidbody.position.x, boundary.xMin, boundary.xMax),
 			Mathf.Clamp (rigidbody.position.y, boundary.yMin, boundary.yMax)
 		);
+
+		rigidbody.rotation = Quaternion.Euler (0.0f, rigidbody.velocity.x * -tilt, 0.0f);
+	}
+
+	void OnTriggerEnter(Collider other)
+	{
+		if (other.tag == "Enemy" && Time.time > invulnerableExpire) 
+		{
+			invulnerableExpire = Time.time + invulnerableTime;
+			anim.SetTrigger("Player Hurt");
+			UpdateHealth (-1);
+		}
+	}
+
+	public void UpdateHealth(int amount)
+	{
+		healthPoints = healthPoints + amount;
+		if (healthPoints <= 0) 
+		{
+			Die ();
+		}
+	}
+
+	void Die()
+	{
+		Destroy (gameObject);
+		GameObject.Find ("Main Camera").GetComponent<PauseMenu> ().PauseGame ();
 	}
 }

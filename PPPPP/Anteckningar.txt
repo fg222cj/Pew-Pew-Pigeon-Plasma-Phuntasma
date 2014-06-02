@@ -1,0 +1,6 @@
+En hel nivå med 1 ny fiendetyp + boss.
+Ny fiendetyp och boss ska kunna skjuta.
+Ljudeffekter och musik. 			CHECK
+Hälsa.						CHECK
+Poäng.						CHECK
+High score?

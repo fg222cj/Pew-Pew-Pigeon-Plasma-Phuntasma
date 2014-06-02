@@ -51,9 +51,12 @@ public class PauseMenu : MonoBehaviour
 	
 	private int toolbarInt = 0;
 	private string[]  toolbarstrings =  {};
+
+	private GameObject[] GUIElements;
 	
 	
 	void Start() {
+		GUIElements = GameObject.FindGameObjectsWithTag("GUI");
 		fpsarray = new float[Screen.width];
 		Time.timeScale = 1;
 		//pauseFilter = Camera.main.GetComponent<SepiaToneEffect>();
@@ -116,6 +119,16 @@ public class PauseMenu : MonoBehaviour
 				
 			default: 
 				currentPage = Page.Main;
+				break;
+			}
+		}
+
+		if (Input.GetKeyDown("return")) 
+		{
+			switch (currentPage) 
+			{
+			case Page.Main: 
+				UnPauseGame(); 
 				break;
 			}
 		}
@@ -301,9 +314,10 @@ public class PauseMenu : MonoBehaviour
 			currentPage = Page.Credits;
 		}
 		*/
-		if (IsBrowser() && !IsBeginning() && GUILayout.Button ("Restart")) {
-			Application.OpenURL(url);
+		if (!IsBeginning() && GUILayout.Button ("Restart")) {
+			Application.LoadLevel(Application.loadedLevel);
 		}
+
 		EndPage();
 	}
 	
@@ -330,6 +344,12 @@ public class PauseMenu : MonoBehaviour
 		savedTimeScale = Time.timeScale;
 		Time.timeScale = 0;
 		AudioListener.pause = true;
+
+		foreach(GameObject element in GUIElements)
+		{
+			element.SetActive(true);
+			//button.transform.position = new Vector3(button.transform.position.x, button.transform.position.y, 0.0f);
+		}
 		/*
 		if (pauseFilter) 
 			pauseFilter.enabled = true;
@@ -341,6 +361,12 @@ public class PauseMenu : MonoBehaviour
 	void UnPauseGame() {
 		Time.timeScale = savedTimeScale;
 		AudioListener.pause = false;
+
+		foreach(GameObject element in GUIElements)
+		{
+			element.SetActive(false);
+			//button.transform.position = new Vector3(button.transform.position.x, button.transform.position.y, 20.0f);
+		}
 
 		/*
 		if (pauseFilter) 

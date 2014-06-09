@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour {
 
 	void Start()
 	{
+		// Hämtar referens till Game Controllern så att vi kan uppdatera spelarens poäng när den här fiended dör.
 		gameControllerObject = GameObject.Find ("Game Controller");
 		gameController = gameControllerObject.GetComponent<GameController> ();
 	}
@@ -37,7 +38,7 @@ public class Enemy : MonoBehaviour {
 
 	void Die()
 	{
-		Destroy (gameObject);
 		gameController.UpdateScore (scoreValue);
+		Destroy (gameObject);
 	}
 }

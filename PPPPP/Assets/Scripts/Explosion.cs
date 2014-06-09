@@ -5,6 +5,7 @@ public class Explosion : MonoBehaviour {
 	
 	void Start () 
 	{
+		// Destroy() måste fördröjas lite, därav Invoke.
 		Invoke ("Die", 0.1f);
 	}
 

@@ -9,8 +9,6 @@ public class GameController : MonoBehaviour
 	public float startWait;
 	public float waveWait;
 
-	public float restartWait; // Antal sekunder tills allt börjar om. Ta bort den här när nivåer har implementerats.
-
 	public GUIText scoreText;
 	public int score;
 
@@ -18,6 +16,8 @@ public class GameController : MonoBehaviour
 	{
 		StartCoroutine (SpawnWaves ());
 	}
+
+	// Spawnar vågor med fiender med godtycklig väntetid emellan.
 	IEnumerator SpawnWaves ()
 	{
 		yield return new WaitForSeconds(startWait);
@@ -31,7 +31,6 @@ public class GameController : MonoBehaviour
 			}
 			yield return new WaitForSeconds(waveWait);
 		}
-		yield return new WaitForSeconds(restartWait);
 	}
 
 	public void UpdateScore(int scoreValue)

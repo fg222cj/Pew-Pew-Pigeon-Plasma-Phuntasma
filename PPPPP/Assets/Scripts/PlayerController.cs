@@ -4,7 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class Boundary
 {
-	public float xMin, xMax, yMin, yMax;
+	public float xMin, xMax, yMin, yMax; // De gränser som spelaren tvingas hålla sig innanför.
 
 }
 
@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
 
 	private float nextFire = 0.0f;
 
-	private Animator anim;
+	private Animator anim; // Används till t.ex. skadeanimation.
 
 	void Start()
 	{
@@ -53,15 +53,18 @@ public class PlayerController : MonoBehaviour
 		Vector3 movement = new Vector2 (moveHorizontal, moveVertical);
 		rigidbody.velocity = movement * speed;
 
+		// Begränsa spelaren till spelytan.
 		rigidbody.position = new Vector2 
 		(
 			Mathf.Clamp (rigidbody.position.x, boundary.xMin, boundary.xMax),
 			Mathf.Clamp (rigidbody.position.y, boundary.yMin, boundary.yMax)
 		);
 
+		// Vrid på spelaren när vi flyger i sidled.
 		rigidbody.rotation = Quaternion.Euler (0.0f, rigidbody.velocity.x * -tilt, 0.0f);
 	}
 
+	// Ta skada och bli tillfälligt oskadbar när vi träffas av en fiende.
 	void OnTriggerEnter(Collider other)
 	{
 		if (other.tag == "Enemy" && Time.time > invulnerableExpire) 
@@ -72,6 +75,7 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+	// Höjer eller sänker spelarens hälsa med amount.
 	public void UpdateHealth(int amount)
 	{
 		healthPoints = healthPoints + amount;

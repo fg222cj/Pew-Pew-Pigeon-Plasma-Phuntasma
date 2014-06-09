@@ -19,6 +19,7 @@ public class HealthBar : MonoBehaviour {
 	void Update () {
 		if (player != null) 
 		{
+			// Health baren krymper i takt med att spelaren tar skada.
 			currentPlayerHealth = player.GetComponent<PlayerController> ().healthPoints;
 			gameObject.transform.localScale = new Vector3 (((int)scale / maxPlayerHealth) * currentPlayerHealth, gameObject.transform.localScale.y, gameObject.transform.localScale.z);
 		}

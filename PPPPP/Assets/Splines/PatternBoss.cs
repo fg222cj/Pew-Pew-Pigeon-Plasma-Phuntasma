@@ -11,13 +11,7 @@ public class PatternBoss : Pattern {
 		if (PositionY <= 4)
 		{
 			VerticalSpeed = 0;
-			StartCoroutine (SpawnShots ());
 		}
 	}
 
-	IEnumerator SpawnShots()
-	{
-		yield return new WaitForSeconds(startWait);
-
-	}
 }

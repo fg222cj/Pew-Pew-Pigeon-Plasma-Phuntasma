@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-// Kopierad från Unitys wiki - http://wiki.unity3d.com/index.php?title=PauseMenu
+// Till stor del hämtat från kodexempel i Unitys wiki - http://wiki.unity3d.com/index.php?title=PauseMenu
 
 public class PauseMenu : MonoBehaviour
 {
 	
 	public GUISkin skin;
-	
-	private float gldepth = -0.5f;
+
 	private float startTime = 0.1f;
 	
 	public Material mat;
@@ -16,19 +15,7 @@ public class PauseMenu : MonoBehaviour
 	private long tris = 0;
 	private long verts = 0;
 	private float savedTimeScale;
-	//private SepiaToneEffect pauseFilter;
 
-	private bool showfps;
-	private bool showtris;
-	private bool showvtx;
-	private bool showfpsgraph;
-	
-	public Color lowFPSColor = Color.red;
-	public Color highFPSColor = Color.green;
-	
-	public int lowFPS = 30;
-	public int highFPS = 50;
-	
 	public GameObject start;
 	
 	public string url = "Builds.html";
@@ -46,9 +33,6 @@ public class PauseMenu : MonoBehaviour
 	
 	private Page currentPage;
 	
-	private float[] fpsarray;
-	private float fps;
-	
 	private int toolbarInt = 0;
 	private string[]  toolbarstrings =  {};
 
@@ -57,37 +41,8 @@ public class PauseMenu : MonoBehaviour
 	
 	void Start() {
 		GUIElements = GameObject.FindGameObjectsWithTag("GUI");
-		fpsarray = new float[Screen.width];
 		Time.timeScale = 1;
-		//pauseFilter = Camera.main.GetComponent<SepiaToneEffect>();
 		PauseGame();
-	}
-	
-	void OnPostRender() {
-		if (showfpsgraph && mat != null) {
-			GL.PushMatrix ();
-			GL.LoadPixelMatrix();
-			for (var i = 0; i < mat.passCount; ++i)
-			{
-				mat.SetPass(i);
-				GL.Begin( GL.LINES );
-				for (int x=0; x < fpsarray.Length; ++x) {
-					GL.Vertex3(x, fpsarray[x], gldepth);
-				}
-				GL.End();
-			}
-			GL.PopMatrix();
-			ScrollFPS();
-		}
-	}
-	
-	void ScrollFPS() {
-		for (int x = 1; x < fpsarray.Length; ++x) {
-			fpsarray[x-1]=fpsarray[x];
-		}
-		if (fps < 1000) {
-			fpsarray[fpsarray.Length - 1]=fps;
-		}
 	}
 	
 	static bool IsDashboard() {
@@ -100,9 +55,6 @@ public class PauseMenu : MonoBehaviour
 	}
 	
 	void LateUpdate () {
-		if (showfps || showfpsgraph) {
-			FPSUpdate();
-		}
 		
 		if (Input.GetKeyDown("escape")) 
 		{
@@ -138,8 +90,7 @@ public class PauseMenu : MonoBehaviour
 		if (skin != null) {
 			GUI.skin = skin;
 		}
-		ShowStatNums();
-		//ShowLegal();
+
 		if (IsGamePaused()) {
 			GUI.color = statColor;
 			switch (currentPage) {
@@ -148,20 +99,6 @@ public class PauseMenu : MonoBehaviour
 			case Page.Credits: ShowCredits(); break;
 			}
 		}   
-	}
-	
-	void ShowLegal() {
-		if (!IsLegal()) {
-			GUI.Label(new Rect(Screen.width-100,Screen.height-20,90,20),
-			          "jdonavan.com");
-		}
-	}
-	
-	bool IsLegal() {
-		return !IsBrowser() || 
-			Application.absoluteURL.StartsWith("http://www.jdonavan.com/") ||
-				Application.absoluteURL.StartsWith("http://jdonavan.com/");
-		
 	}
 	
 	void ShowToolbar() {
@@ -188,98 +125,14 @@ public class PauseMenu : MonoBehaviour
 	}
 	
 	void ShowBackButton() {
-		if (GUI.Button(new Rect(540, Screen.height - 400, 50, 20),"Back")) {
+		if (GUI.Button(new Rect(280, Screen.height - 500, 50, 20),"Back")) {
 			currentPage = Page.Main;
 		}
 	}
-	
-	void ShowDevice() {
-		GUILayout.Label("Unity player version "+Application.unityVersion);
-		GUILayout.Label("Graphics: "+SystemInfo.graphicsDeviceName+" "+
-		                SystemInfo.graphicsMemorySize+"MB\n"+
-		                SystemInfo.graphicsDeviceVersion+"\n"+
-		                SystemInfo.graphicsDeviceVendor);
-		GUILayout.Label("Shadows: "+SystemInfo.supportsShadows);
-		GUILayout.Label("Image Effects: "+SystemInfo.supportsImageEffects);
-		GUILayout.Label("Render Textures: "+SystemInfo.supportsRenderTextures);
-	}
-
-	/*
-	void Qualities() {
-		switch (QualitySettings.currentLevel) 
-		{
-		case QualityLevel.Fastest:
-			GUILayout.Label("Fastest");
-			break;
-		case QualityLevel.Fast:
-			GUILayout.Label("Fast");
-			break;
-		case QualityLevel.Simple:
-			GUILayout.Label("Simple");
-			break;
-		case QualityLevel.Good:
-			GUILayout.Label("Good");
-			break;
-		case QualityLevel.Beautiful:
-			GUILayout.Label("Beautiful");
-			break;
-		case QualityLevel.Fantastic:
-			GUILayout.Label("Fantastic");
-			break;
-		}
-	}
-	
-	void QualityControl() {
-		GUILayout.BeginHorizontal();
-		if (GUILayout.Button("Decrease")) {
-			QualitySettings.DecreaseLevel();
-		}
-		if (GUILayout.Button("Increase")) {
-			QualitySettings.IncreaseLevel();
-		}
-		GUILayout.EndHorizontal();
-	}
-	*/
 
 	void VolumeControl() {
 		GUILayout.Label("Volume");
 		AudioListener.volume = GUILayout.HorizontalSlider(AudioListener.volume, 0, 1);
-	}
-	
-	void StatControl() {
-		GUILayout.BeginHorizontal();
-		showfps = GUILayout.Toggle(showfps,"FPS");
-		showtris = GUILayout.Toggle(showtris,"Triangles");
-		showvtx = GUILayout.Toggle(showvtx,"Vertices");
-		showfpsgraph = GUILayout.Toggle(showfpsgraph,"FPS Graph");
-		GUILayout.EndHorizontal();
-	}
-	
-	void FPSUpdate() {
-		float delta = Time.smoothDeltaTime;
-		if (!IsGamePaused() && delta !=0.0) {
-			fps = 1 / delta;
-		}
-	}
-	
-	void ShowStatNums() {
-		GUILayout.BeginArea( new Rect(Screen.width - 100, 10, 100, 200));
-		if (showfps) {
-			string fpsstring= fps.ToString ("#,##0 fps");
-			GUI.color = Color.Lerp(lowFPSColor, highFPSColor,(fps-lowFPS)/(highFPS-lowFPS));
-			GUILayout.Label (fpsstring);
-		}
-		if (showtris || showvtx) {
-			GetObjectStats();
-			GUI.color = statColor;
-		}
-		if (showtris) {
-			GUILayout.Label (tris+"tri");
-		}
-		if (showvtx) {
-			GUILayout.Label (verts+"vtx");
-		}
-		GUILayout.EndArea();
 	}
 	
 	void BeginPage(int width, int height) {
@@ -309,11 +162,7 @@ public class PauseMenu : MonoBehaviour
 		if (GUILayout.Button ("Options")) {
 			currentPage = Page.Options;
 		}
-		/*
-		if (GUILayout.Button ("Credits")) {
-			currentPage = Page.Credits;
-		}
-		*/
+
 		if (!IsBeginning() && GUILayout.Button ("Restart")) {
 			Application.LoadLevel(Application.loadedLevel);
 		}
@@ -348,13 +197,8 @@ public class PauseMenu : MonoBehaviour
 		foreach(GameObject element in GUIElements)
 		{
 			element.SetActive(true);
-			//button.transform.position = new Vector3(button.transform.position.x, button.transform.position.y, 0.0f);
 		}
-		/*
-		if (pauseFilter) 
-			pauseFilter.enabled = true;
 
-		*/
 		currentPage = Page.Main;
 	}
 	
@@ -365,13 +209,7 @@ public class PauseMenu : MonoBehaviour
 		foreach(GameObject element in GUIElements)
 		{
 			element.SetActive(false);
-			//button.transform.position = new Vector3(button.transform.position.x, button.transform.position.y, 20.0f);
 		}
-
-		/*
-		if (pauseFilter) 
-			pauseFilter.enabled = false;
-		*/
 
 		currentPage = Page.None;
 		
